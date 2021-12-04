@@ -1,0 +1,2 @@
+Adafruit CircuitPython 7.0.0 on 2021-09-20; Adafruit Feather M0 Express with samd21g18
+Board ID:feather_m0_express
