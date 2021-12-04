@@ -1,4 +1,4 @@
-#Songbird
+# Songbird
 
 Songbird is a midi device built to aid live electronic peformance
 
@@ -15,7 +15,7 @@ Software:
 
 --------------
 
-##Todos:
+## Todos:
 
 Music lib:
 - Scale (root, mode)
