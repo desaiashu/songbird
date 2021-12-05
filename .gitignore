@@ -1,3 +1,4 @@
 .Trashes
 .fseventsd/*
-._code.py
+._*
+*.DS_Store
