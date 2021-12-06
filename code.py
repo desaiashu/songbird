@@ -15,6 +15,14 @@ from adafruit_midi.note_on import NoteOn
 from adafruit_midi.start import Start
 from adafruit_midi.stop import Stop
 from adafruit_midi.timing_clock import TimingClock
+from songbird_music.note import note_from_number
+from songbird_interface.display import Display
+import songbird_music.scale
+
+
+# LED code here
+
+display = Display("Cminor", "")
 
 # Midi code below
 
@@ -36,7 +44,7 @@ print("Default output channel:", midi.out_channel + 1)
 
 
 note = 59
-root = 67
+root = 60
 step = -1
 playing = False
 
@@ -84,6 +92,7 @@ def get_next_note():
 def msg_handler(message):
     global step
     global playing
+    global display
     if isinstance(message, TimingClock) and playing:
         last_note = get_last_note()
         if last_note > 0:
@@ -96,6 +105,7 @@ def msg_handler(message):
                 if next_note > 0:
                   vel = random.choice([64, 90, 127])
                   midi.send(NoteOn(next_note, vel))
+                  display.setLabel2(note_from_number(next_note))
     elif isinstance(message, Start):
         step = -1
         playing = True
