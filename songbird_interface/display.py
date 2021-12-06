@@ -60,7 +60,8 @@ class Display:
         self.label3 = label.Label(terminalio.FONT, text=text3, scale=2, color=0xFFFFFF, x=9, y=44)
         splash.append(self.label3)
 
+    def setLabel1(self, text):
+        self.label1.text = text
+
     def setLabel2(self, text):
         self.label2.text = text
-
-print('yay')
