@@ -1,4 +1,4 @@
-from .note import number_from_note, note_from_number
+from songbird.notes.note import number_from_note, note_from_number
 
 # scale structures
 base_scale = [2,2,1,2,2,2,1]
@@ -16,26 +16,42 @@ root_offset = {
     "locrian": 6
 }
 
-def gen_scale(root, octave, mode):
-    midi_root = number_from_note(root, octave)
-    scale = [midi_root]
+class Scale:
+    def __init__(
+        self,
+        root_note="C",
+        octave=4,
+        mode="minor",
+        type="wide",
+    ):
+        self.root_note = root_note
+        self.root = number_from_note(root_note, octave)
+        self.offset = root_offset[mode]
+        self.dissonants = []
+        self.mode = mode
+        self.octave = octave
+        self.type = type
 
-    distance = 0
-    offset = root_offset[mode]
-    for x in range(7):
-        distance += base_scale[(x+offset) % 7]
-        scale.append(midi_root + distance)
+        if type == "wide":
+            self.gen_wide_scale(),
+        else:
+            self.gen_scale()
 
-    return scale
+    def name(self):
+        return self.root_note + " " + self.mode
 
-def gen_wide_scale(root, octave, mode):
+    def gen_scale(self):
+        self.notes = [self.root]
+        distance = 0
+        for x in range(7):
+            distance += base_scale[(x+self.offset) % 7]
+            self.notes.append(self.root + distance)
+        self.dissonants = dissonants
 
-    scale = gen_scale(root, octave, mode)
-
-    lower_root = number_from_note(root, octave-1)
-    lower_third_distance = scale[2]-scale[0]
-    lower_fifth_distance = scale[4]-scale[0]
-
-    wide_scale = [lower_root-12, lower_root, lower_root+lower_third_distance, lower_root+lower_fifth_distance] + scale
-
-    return wide_scale
+    def gen_wide_scale(self):
+        self.gen_scale()
+        lower_root = self.root - 12
+        lower_third_distance = self.notes[2]-self.notes[0]
+        lower_fifth_distance = self.notes[4]-self.notes[0]
+        self.notes = [lower_root-12, lower_root, lower_root+lower_third_distance, lower_root+lower_fifth_distance] + self.notes
+        self.dissonants = dissonants_wide_scale
