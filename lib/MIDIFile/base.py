@@ -1,9 +1,3 @@
-'''
-Created on 15 Sep 2019
-
-@author: julianporter
-'''
-
 class MIDIParserError(Exception):
 
     def __init__(self,*args,**kwargs):

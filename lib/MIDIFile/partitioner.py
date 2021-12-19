@@ -1,10 +1,4 @@
-'''
-Created on 14 Sep 2019
-
-@author: julianporter
-'''
-
-import .chunks
+from .chunks import Header, Track
 from .base import Base
 
 class MIDIFile(object):
@@ -12,7 +6,7 @@ class MIDIFile(object):
     def __init__(self,filename):
         with open(filename,mode='rb') as file:
             self.bytes=file.read()
-        self.header=MIDIFile.chunks.Header()
+        self.header=Header()
         self.tracks=[]
 
     def parse(self):
@@ -24,10 +18,10 @@ class MIDIFile(object):
             if header=='MThd' : # header
                 if length != 6:
                     raise Exception('Header chunk must have length 6')
-                self.header = MIDIFile.chunks.Header(buffer[8:8+length])
+                self.header = Header(buffer[8:8+length])
 
             elif header=='MTrk' : # track
-                self.tracks.append(MIDIFile.chunks.Track(buffer[8:8+length]))
+                self.tracks.append(Track(buffer[8:8+length]))
             else:
                 print(f'Unknown chunk type {header} - skipping')
             buffer = buffer[8+length:]

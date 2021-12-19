@@ -1,8 +1,3 @@
-'''
-Created on 15 Sep 2019
-
-@author: julianporter
-'''
 from .events import SysExEvent, MIDIEvent, MetaEvent
 import traceback
 from .base import Base

@@ -1,5 +1,4 @@
-from .converters import ConversionEnum, Converter
-from .util import SafeEnum
+from .util import SafeEnum, ConversionEnum, Converter
 from .base import MIDIParserError
 import re
 
