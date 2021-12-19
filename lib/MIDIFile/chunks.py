@@ -3,19 +3,40 @@ Created on 15 Sep 2019
 
 @author: julianporter
 '''
-
-from .chunk import Chunk
-from MIDIFile.Events import MetaEvent, MIDIEvent, SysExEvent
+from .events import SysExEvent, MIDIEvent, MetaEvent
 import traceback
-           
+from .base import Base
+
+class Chunk(Base):
+
+    def __init__(self,data=b''):
+        super().__init__()
+        self.data=data
+
+    def __len__(self):
+        return len(self.data)
+
+    def __str__(self):
+        return self.stringify(self.data)
+
+class Header(Chunk):
+
+    def __init__(self,data=b''):
+        super().__init__(data)
+        self.format = self.build(data[:2])
+        self.nTracks = self.build(data[2:4])
+        self.division = self.build(data[4:])
+
+    def __str__(self):
+        return f'Format {self.format} nTracks {self.nTracks} division {self.division}'
 
 class Track(Chunk):
-    
+
     def __init__(self,data,containsTiming = True):
         super().__init__(data)
         self.events=[]
         self.containsTiming = containsTiming
-           
+
     def parse(self):
         self.buffer=self.data
         time=0 if self.containsTiming else None
@@ -42,16 +63,15 @@ class Track(Chunk):
             #print(f'Error : {e}')
             traceback.print_exc()
             pass
-    
+
     def __iter__(self):
         return iter(self.events)
-        
+
     def __len__(self):
         return len(self.events)
-        
+
     def __getitem__(self,index):
         return self.events[index]
-    
+
     def __str__(self):
         return self.stringify(self.events, '\n')
-        

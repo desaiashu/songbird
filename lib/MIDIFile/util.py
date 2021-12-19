@@ -3,9 +3,13 @@ Created on 16 Sep 2019
 
 @author: julianporter
 '''
-import enum
+from .enum import Enum
 
-class SafeEnum(enum.Enum):
+class SafeEnum(Enum):
+# class SafeEnum(enum.Enum):
+
+    # def __init__(self):
+    #     self.test = "foo"
 
     def __str__(self):
         return self.name.replace('_',' ')
