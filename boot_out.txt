@@ -1,2 +1,0 @@
-Adafruit CircuitPython 7.0.0 on 2021-09-20; FeatherS2 with ESP32S2
-Board ID:unexpectedmaker_feathers2
