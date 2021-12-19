@@ -2,3 +2,4 @@
 .fseventsd/*
 ._*
 *.DS_Store
+.metadata_never_index
