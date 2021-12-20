@@ -17,6 +17,7 @@ class MelodicSequencer(Sequencer):
         self.pattern_index = 0
         self.pattern = pattern
         self.instrument = None
+        self.step = -1
 
     def get_last_note(self):
         return self.note
@@ -38,14 +39,19 @@ class MelodicSequencer(Sequencer):
         return self.note
 
     def step(self):
-        last_note = self.get_last_note()
-        if last_note > 0:
-            if self.instrument:
-                self.instrument.end_note(last_note)
-        next_note = self.get_next_note()
-        if next_note > 0:
-            vel = random.choice([64, 90, 127])
-            if self.instrument:
-                self.instrument.start_note(next_note, vel)
-                if self.step_callback:
-                    self.step_callback(note_from_number(next_note))
+        self.step = self.step + 1
+        if self.step % 6 == 0:
+            last_note = self.get_last_note()
+            if last_note > 0:
+                if self.instrument:
+                    self.instrument.end_note(last_note)
+            next_note = self.get_next_note()
+            if next_note > 0:
+                vel = random.choice([64, 90, 127])
+                if self.instrument:
+                    self.instrument.start_note(next_note, vel)
+                    if self.step_callback:
+                        self.step_callback(note_from_number(next_note))
+
+    def stop(self):
+        self.step = -1

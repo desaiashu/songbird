@@ -19,3 +19,9 @@ class Sequencer:
 
     def step(self):
         pass
+
+    def start(self):
+        pass
+
+    def stop(self):
+        pass

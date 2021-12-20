@@ -1,4 +1,5 @@
 from MIDIFile import MIDIFile
+import time
 
 import songbird.clock.clock as clock
 from songbird.notes.note import note_from_number, number_from_note
@@ -26,7 +27,7 @@ class FileComposer(Composer):
         melodic_seq.step_callback = step_callback
         melodic_seq.instrument = Instrument(2)
 
-        file_seq = FileSequencer(scale)
+        file_seq = FileSequencer(self.midi_data[1])
         file_seq.instrument = Instrument(15)
 
         self.sequencers = [melodic_seq, file_seq]
@@ -38,6 +39,7 @@ class FileComposer(Composer):
     def parse_midi(self):
         m = MIDIFile(self.file)
         m.parse()
+        print(m)
         for idx, track in enumerate(m):
             track.parse()
             print(f'Track {idx}:')
@@ -45,7 +47,9 @@ class FileComposer(Composer):
 
     # need to store this at the composer level and send down
     def change_scale(self):
-        new_index = (minor_fifths.index(note_from_number(self.sequencer.root))+1) % len(minor_fifths)
+        new_index = (minor_fifths.index(self.scale.root_note)+1) % len(minor_fifths)
         new = minor_fifths[new_index]
-        self.sequencer.change_scale(Scale(new, 4, "minor", "wide"))
-        return self.sequencer.scale.name()
+        self.scale = Scale(new, 4, "minor", "wide")
+        for s in self.sequencers:
+            s.change_scale(self.scale)
+        return self.scale.name()

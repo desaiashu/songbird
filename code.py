@@ -1,6 +1,7 @@
 import time
 import songbird.interface.program as program
 import songbird.clock.clock as clock
+import gc
 
 # Run loop
 while True:

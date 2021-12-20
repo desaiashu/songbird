@@ -24,7 +24,8 @@ class BasicComposer(Composer):
         clock.register_sequencer(self.sequencer)
 
     def change_scale(self):
-        new_index = (minor_fifths.index(note_from_number(self.sequencer.root))+1) % len(minor_fifths)
+        new_index = (minor_fifths.index(self.scale.root_note)+1) % len(minor_fifths)
         new = minor_fifths[new_index]
-        self.sequencer.change_scale(Scale(new, 4, "minor", "wide"))
-        return self.sequencer.scale.name()
+        self.scale = Scale(new, 4, "minor", "wide")
+        self.sequencer.change_scale(self.scale)
+        return self.scale.name()

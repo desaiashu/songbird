@@ -8,22 +8,22 @@ class Transport:
     def __init__(
         self,
     ):
-        self.step = -1
         self.playing = False
         self.sequencers = []
 
     def msg_handler(self, message):
         if isinstance(message, TimingClock) and self.playing:
-            self.step = self.step + 1
-            if self.step % 6 == 0:
-                for sequencer in self.sequencers:
-                     sequencer.step()
+            for sequencer in self.sequencers:
+                 sequencer.step()
         elif isinstance(message, Start):
-            self.step = -1
             self.playing = True
+            for sequencer in self.sequencers:
+                 sequencer.start()
             print('start')
         elif isinstance(message, Stop):
             self.playing = False
+            for sequencer in self.sequencers:
+                 sequencer.stop()
             print('stop')
 
 transport = Transport()
