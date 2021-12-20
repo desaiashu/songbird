@@ -27,7 +27,7 @@ class FileComposer(Composer):
         melodic_seq.step_callback = step_callback
         melodic_seq.instrument = Instrument(2)
 
-        file_seq = FileSequencer(self.midi_data[1])
+        file_seq = FileSequencer(self.midi_data[0])
         file_seq.instrument = Instrument(15)
 
         self.sequencers = [melodic_seq, file_seq]

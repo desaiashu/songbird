@@ -42,24 +42,25 @@ class Track(Chunk):
                 if self.containsTiming:
                     delta, _=self.getVarLengthInt()
                     time+=delta
-                    if time == 4226 or time == 4230:
-                        print("yay")
-                        print(self.buffer[0])
-                    # print(delta)
                 #print(f'Time is {time} length {n}')
                 eventType=self.buffer[0]
                 #print(f'Event type is {eventType}')
                 if eventType == 0xff:     # Meta event
                     event = MetaEvent(time,self.buffer)
+                    self.events.append(event)
+                    # print('meta')
                 elif eventType in [0xf0,0xf7]: # Sysex event
                     event = SysExEvent(time,self.buffer)
-                elif eventType in [0x80, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0]:
+                    self.events.append(event)
+                    # print('sysx')
+                elif eventType in range(0x7f, 0xef):
                     event = MIDIEvent(time,self.buffer)
-                else:
-                    event = MIDIEvent(time,self.buffer)
+                    self.events.append(event)
+                    # print('midi')
+                else: # we don't know how to process this data, seems to not be an issue for ableton, might fix this later
+                    event = MIDIEvent(time,self.buffer) ## create dummy event for length and buffer, don't add to the track
                     time-=delta
                 length = len(event)
-                self.events.append(event)
                 self.buffer=self.buffer[length:]
         except Exception:
             #print(f'Error : {e}')

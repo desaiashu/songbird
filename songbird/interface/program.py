@@ -11,7 +11,7 @@ def transport_step_callback(note):
     display.setLabel2(note)
 
 # Construct basic handler
-file_composer = FileComposer('midifiles/Groove Monkee/Electronic/Downtempo/069 Downtempo 01 8-Bar Fill.mid', transport_step_callback)
+file_composer = FileComposer('midifiles/ableton.mid', transport_step_callback)
 display.setLabel1(file_composer.scale.name())
 
 # Button initialization, handler, and callback

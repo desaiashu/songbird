@@ -7,8 +7,9 @@ class FileSequencer(Sequencer):
     ):
         self.track = track
 
-        for i in range(0, 25):
-            print(track.events[i])
+        print(track)
+        # for i in range(0, 20):
+        #     print(track.events[i])
 
     def step(self):
         pass
