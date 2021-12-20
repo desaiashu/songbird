@@ -49,24 +49,24 @@ class MetaEventKinds(SafeEnum):
 
     def attributes(self,_bytes=b''):
         cls=self.__class__
-        if self in [cls.Text,cls.Copyright_Notice,cls.Track_Name,cls.Instrument_Name,cls.Lyric,cls.Marker,cls.Cue_Point]:
+        if self.code in [cls.Text,cls.Copyright_Notice,cls.Track_Name,cls.Instrument_Name,cls.Lyric,cls.Marker,cls.Cue_Point]:
             return OrderedDict(text = _bytes)
-        elif self==cls.Sequence_Number:
+        elif self.code==cls.Sequence_Number:
             return OrderedDict(number = Event.build(_bytes[:2]))
-        elif self==cls.MIDI_Channel_Prefix:
+        elif self.code==cls.MIDI_Channel_Prefix:
             return OrderedDict(channel = _bytes[0]&0x0f)
-        elif self==cls.End_Of_Track:
+        elif self.code==cls.End_Of_Track:
             return OrderedDict()
-        elif self==cls.Set_Tempo:
+        elif self.code==cls.Set_Tempo:
             return OrderedDict(tempo = Event.build(_bytes[:3])*120/500000)
-        elif self==cls.SMTPE_Offset:
+        elif self.code==cls.SMTPE_Offset:
             return OrderedDict(hh=_bytes[0],mm=_bytes[1],ss=_bytes[2],frame=_bytes[3]+0.01*_bytes[4])
-        elif self==cls.Time_Signature:
+        elif self.code==cls.Time_Signature:
             return OrderedDict(numerator=_bytes[0],denominator=(1<<_bytes[1]),clocksPerTick=_bytes[2],demisemiquaverPer24Clocks=_bytes[3])
-        elif self==cls.Key_Signature:
+        elif self.code==cls.Key_Signature:
             mode = { 0 : 'major', 1 : 'minor' }[_bytes[1]]
             return OrderedDict(key=self.key(_bytes[0]),mode=mode)
-        elif self==cls.Sequencer_Specific:
+        elif self.code==cls.Sequencer_Specific:
             return OrderedDict(data=_bytes)
         else:
             return OrderedDict()

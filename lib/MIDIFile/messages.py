@@ -82,11 +82,11 @@ class SystemMessages(ConversionEnum):
 
     def length(self):
         cls=self.__class__
-        if self == cls.Exclusive:
+        if self.code == cls.Exclusive:
             return None
-        elif self in [cls.Time_Code_Quarter_Frame,cls.Song_Select]:
+        elif self.code in [cls.Time_Code_Quarter_Frame,cls.Song_Select]:
             return 1
-        elif self == cls.Song_Position_Pointer:
+        elif self.code == cls.Song_Position_Pointer:
             return 2
         else:
             return 0
