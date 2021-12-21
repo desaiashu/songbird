@@ -8,7 +8,8 @@ from songbird.composition.file_composer import FileComposer
 display = Display("", "")
 
 def transport_step_callback(note):
-    display.setLabel2(note)
+    pass
+    # display.setLabel2(note)
 
 # Construct basic handler
 file_composer = FileComposer('midifiles/ableton.mid', transport_step_callback)

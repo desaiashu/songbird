@@ -2,7 +2,7 @@
 #takes in midi clock if it's sensing one, otherwise sets BPM internally
 #registers instruments to master clock
 
-import supervisor
+import time
 from songbird.interface.midi import midi
 from songbird.sequencing.sequencer import Sequencer
 from adafruit_midi.start import Start
@@ -38,12 +38,16 @@ class Transport:
 
 
 # Todos:
+# Rewrite midi clock in c++?
+# Move to raspberry pi?
 # Allow for 48ppq clock? 96ppq clock?
 
 #PPQ = Pulses per quarter note (1 quarter note = 1 beat)
 PPQ = 24
-MS_PER_MIN = 60000
+NS_PER_MIN = 60000000000
+QUARTER_NOTE_PER_BAR = 4 # This may change later
 TICKS_PER_PULSE = 4 # Assumes 24ppq clock and 96ppq midi files
+TICKS_PER_BAR = TICKS_PER_PULSE*PPQ*QUARTER_NOTE_PER_BAR
 
 class Clock:
 
@@ -57,12 +61,12 @@ class Clock:
             self.BPM = 120.0
             self.calc_miliseconds()
         # else:
-        #     self.estimatedBPM = 0.0
+        #     self.estimated_BPM = 0.0
 
         self.estimated_BPM = 0.0
 
-        self.midi_time = -1
-        self.time = 0
+        self.midi_time = -1.0
+        self.time = 0.0
 
         self.ticks = 0
         self.pulses = 0
@@ -75,52 +79,53 @@ class Clock:
 
     def pulse(self):
         self.transport.pulse()
-        self.time_since_pulse = 0
-        if self.internal:
-            midi.send(TimingClock())
+        self.time_since_pulse = 0.0
+        self.pulses += 1
+        # if self.internal:
+        #     midi.send(TimingClock())
 
     def tick(self):
         self.transport.tick()
-        self.time_since_tick = 0
+        self.time_since_tick = 0.0
+        self.ticks += 1
 
     def start(self):
         self.transport.start()
 
     def stop(self):
         self.transport.stop()
-        self.midi_time = -1
+        self.midi_time = -1.0
+        self.ticks = 0
+        self.pulses = 0
 
 
     def calc_miliseconds(self, bpm=None):
         if not bpm:
             bpm = self.BPM
-        self.ms_per_pulse = MS_PER_MIN/(bpm*PPQ)
-        self.ms_per_tick = self.ms_per_pulse / TICKS_PER_PULSE
-        print(self.ms_per_pulse)
-        print(self.ms_per_tick)
+        self.ns_per_pulse = NS_PER_MIN/(bpm*PPQ)
+        self.ns_per_tick = self.ns_per_pulse / TICKS_PER_PULSE
 
-    def estimate_bpm(self, delta_ms):
-        if delta_ms > 0:
+    def estimate_bpm(self, delta_ns):
+        if delta_ns > 0:
             if self.estimated_BPM == 0.0:
-                self.estimated_BPM = self.time_since_pulse*PPQ/MS_PER_MIN
+                self.estimated_BPM = NS_PER_MIN/(self.time_since_pulse*PPQ)
             else:
-                self.estimated_BPM = 0.5 * (self.estimated_BPM + self.time_since_pulse*PPQ/MS_PER_MIN)
-            # self.calc_miliseconds(self.estimated_BPM)
-            print(self.time_since_pulse)
-            print(self.estimated_BPM)
+                self.estimated_BPM = 0.5 * (self.estimated_BPM + NS_PER_MIN/(self.time_since_pulse*PPQ))
+            self.calc_miliseconds(self.estimated_BPM)
+            # print(self.estimated_BPM)
 
     def get_midi_and_delta_time(self):
-        current_time = supervisor.ticks_ms()
+        current_time = time.monotonic_ns()
         if self.midi_time >=0:
-            delta_time = current_time - self.time
+            delta_time = (current_time - self.time)
             self.midi_time += delta_time
             self.time_since_tick += delta_time
             self.time_since_pulse += delta_time
         else:
             delta_time = 0
-            self.midi_time = 0
-            self.time_since_tick = 0
-            self.time_since_pulse = 0
+            self.midi_time = 0.0
+            self.time_since_tick = 0.0
+            self.time_since_pulse = 0.0
         self.time = current_time
         return delta_time
 
@@ -128,17 +133,14 @@ class Clock:
         delta = self.get_midi_and_delta_time()
         if self.internal:
             if self.transport.playing:
-                # self.get_midi_and_delta_time()
-                if self.time_since_tick >= self.ms_per_tick:
+                if self.time_since_tick >= self.ns_per_tick:
                     self.tick()
-                if self.time_since_pulse >= self.ms_per_pulse:
-                    self.estimate_bpm(delta)
+                if self.time_since_pulse >= self.ns_per_pulse:
                     self.pulse()
         else:
             msg = midi.receive()
             if msg is not None:
                 if isinstance(message, TimingClock) and self.transport.playing:
-                    # delta = self.get_midi_and_delta_time()
                     self.estimate_bpm(delta)
                     self.pulse()
                 elif isinstance(message, Start):
@@ -146,9 +148,8 @@ class Clock:
                 elif isinstance(message, Stop):
                     self.stop()
             elif self.estimated_BPM > 0:
-                if self.time_since_tick > self.ms_per_tick:
+                if self.time_since_tick > self.ns_per_tick:
                     self.tick()
-
 
 
 clock = Clock()
