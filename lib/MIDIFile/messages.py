@@ -153,7 +153,7 @@ class Note(object):
             raise MIDIParserError('illegal arguments for MIDI Note')
 
     @property
-    def number(self):
+    def number(self): #edited this to return the number rather than letter
         return self.notes.index(self.note.lower())+self.octave*12
 
     def __str__(self):

@@ -80,14 +80,12 @@ class Clock:
     def pulse(self):
         self.transport.pulse()
         self.time_since_pulse = 0.0
-        self.pulses += 1
         # if self.internal:
         #     midi.send(TimingClock())
 
     def tick(self):
         self.transport.tick()
         self.time_since_tick = 0.0
-        self.ticks += 1
 
     def start(self):
         self.transport.start()
@@ -95,8 +93,6 @@ class Clock:
     def stop(self):
         self.transport.stop()
         self.midi_time = -1.0
-        self.ticks = 0
-        self.pulses = 0
 
 
     def calc_miliseconds(self, bpm=None):
