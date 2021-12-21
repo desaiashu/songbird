@@ -38,7 +38,7 @@ class MelodicSequencer(Sequencer):
             self.note = self.scale.notes[scale_index]
         return self.note
 
-    def step(self):
+    def pulse(self):
         self.step = self.step + 1
         if self.step % 6 == 0:
             last_note = self.get_last_note()

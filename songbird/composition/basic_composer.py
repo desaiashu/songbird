@@ -1,6 +1,6 @@
 # a composer that only composes for one instrument and a chorus, mostly for testing
 
-import songbird.clock.clock as clock
+from songbird.clock.clock import clock
 from songbird.notes.note import note_from_number, number_from_note
 from songbird.theory.circle_of_fifths import minor_fifths
 from songbird.sequencing.melody import MelodicSequencer

@@ -1,10 +1,8 @@
 import time
 import songbird.interface.program as program
-import songbird.clock.clock as clock
-import gc
+from songbird.clock.clock import clock
 
 # Run loop
 while True:
     program.handler()
     clock.handler()
-    time.sleep(0.005)

@@ -1,7 +1,7 @@
 from MIDIFile import MIDIFile
 import time
 
-import songbird.clock.clock as clock
+from songbird.clock.clock import clock
 from songbird.notes.note import note_from_number, number_from_note
 from songbird.theory.circle_of_fifths import minor_fifths
 from songbird.sequencing.midi_file import FileSequencer
@@ -34,6 +34,8 @@ class FileComposer(Composer):
 
         for s in self.sequencers:
             clock.register_sequencer(s)
+
+        clock.start()
 
 
     def parse_midi(self):

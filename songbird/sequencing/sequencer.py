@@ -17,7 +17,10 @@ class Sequencer:
         self.root = scale.root
         self.note  = self.root
 
-    def step(self):
+    def pulse(self):
+        pass
+
+    def tick(self):
         pass
 
     def start(self):
